@@ -1,0 +1,5 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        NeosRulez.Bootstrap.Navbar.MegaMenu: true

@@ -1,0 +1,33 @@
+'NeosRulez.Bootstrap.Navbar.MegaMenu:Mixin.MegaMenu':
+  abstract: true
+  ui:
+    inspector:
+      groups:
+        megaMenu:
+          label: Mega menu
+          icon: fas fa-bars
+          position: end
+  properties:
+    enableMegaMenu:
+      type: boolean
+      defaultValue: false
+      ui:
+        label: Enable mega menu for subpages
+        reloadIfChanged: true
+        inspector:
+          group: megaMenu
+          position: 1
+    megaMenuImage:
+      type: Neos\Media\Domain\Model\ImageInterface
+      ui:
+        label: Mega menu image
+        reloadIfChanged: true
+        inspector:
+          hidden: 'ClientEval:node.properties.enableMegaMenu ? true : false'
+          group: megaMenu
+          position: 2
+          editorOptions:
+            features:
+              mediaBrowser: true
+              crop: true
+              resize: false

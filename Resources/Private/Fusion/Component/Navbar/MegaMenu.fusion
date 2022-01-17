@@ -1,0 +1,72 @@
+prototype(NeosRulez.Bootstrap:Component.Navbar.Navbar.List.ListItem) {
+    isMegaMenu = ${item.node.properties.enableMegaMenu}
+    class.@process.megaMenu = ${value + (this.isMegaMenu ? ' has-megamenu' : '')}
+}
+
+prototype(NeosRulez.Bootstrap:Component.Navbar.Navbar.SubList) {
+    @context.isMegaMenu = ${item.node.properties.enableMegaMenu}
+    listClass.@process.megaMenu = ${value + (isMegaMenu ? ' megamenu' : '')}
+
+    rowClass = 'row'
+    @context.rowClass = ${this.rowClass}
+
+    colClass = 'col-md px-2 megamenu-col'
+    @context.colClass = ${this.colClass}
+
+    renderer = afx`
+        <Neos.Fusion:Tag @if.render={props.items} tagName={props.listTag} attributes.class={props.listClass} attributes.aria-labelledby="navbarDropdown" >
+            <NeosRulez.Bootstrap:Component.Navbar.Navbar.SubList.Loop items={props.items} rowClass={rowClass} isMegaMenu={isMegaMenu} />
+        </Neos.Fusion:Tag>
+    `
+
+    renderer {
+        prototype(NeosRulez.Bootstrap:Component.Navbar.Navbar.List.LinkItem) {
+            @context.megaMenuItemImage = NeosRulez.Bootstrap.Navbar.MegaMenu:Component.Image
+            @context.megaMenuItemSublist = NeosRulez.Bootstrap.Navbar.MegaMenu:Component.SubList
+            @process.megaMenuItem = ${isMegaMenu ? '<div class="' + colClass + '">' + megaMenuItemImage + value + megaMenuItemSublist + '</div>' : value}
+        }
+    }
+}
+
+prototype(NeosRulez.Bootstrap:Component.Navbar.Navbar.SubList.Loop) < prototype(Neos.Fusion:Component) {
+
+    loop = afx`
+        <Neos.Fusion:Loop items={props.items} itemName="item" itemKey="itemKey" >
+            <NeosRulez.Bootstrap:Component.Navbar.Navbar.List.LinkItem linkClass={props.linkClass} />
+        </Neos.Fusion:Loop>
+    `
+    renderer = afx`
+        <div @if.render={props.isMegaMenu} class={props.rowClass}>
+            {props.loop}
+        </div>
+        {!props.isMegaMenu ? props.loop : false}
+    `
+}
+
+prototype(NeosRulez.Bootstrap.Navbar.MegaMenu:Component.Image) < prototype(Neos.Fusion:Component) {
+    image = ${item.node.properties.megaMenuImage}
+
+    renderer = afx`
+        <Neos.Neos:NodeLink @if.render={props.image} node={item.node} attributes.class="megamenu-image-link">
+            <NeosRulez.Bootstrap:Component.ImageTag image={props.image} width="350" height="220" async={true} class="megamenu-image" />
+        </Neos.Neos:NodeLink>
+    `
+}
+
+prototype(NeosRulez.Bootstrap.Navbar.MegaMenu:Component.SubList) < prototype(Neos.Fusion:Component) {
+    linkClass = 'nav-link'
+
+    subListItems = Neos.Neos:MenuItems {
+        itemCollection = ${q(item.node).find('[instanceof Neos.Neos:Document]').get()}
+    }
+
+    renderer = afx`
+        <ul @if.render={props.subListItems} class="megamenu-subitems">
+            <Neos.Fusion:Loop items={props.subListItems} >
+                <li class="nav-item">
+                    <NeosRulez.Bootstrap:Component.Navbar.Navbar.List.LinkItem linkClass={props.linkClass} isDropdown={false} subList={false} />
+                </li>
+            </Neos.Fusion:Loop>
+        </ul>
+    `
+}
